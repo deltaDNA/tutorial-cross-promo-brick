@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour {
     {
         // Player starts level
         player.SetLevel(1);
-        brickSpawn = GetFoodSpawn(player.playerLevel);
+        brickSpawn = GetBrickSpawn(player.playerLevel);
 
         player.UpdatePlayerStatistics();
 
@@ -171,7 +171,7 @@ public class GameManager : MonoBehaviour {
 
         player.UpdatePlayerStatistics();
 
-        brickSpawn = GetFoodSpawn(player.playerLevel);
+        brickSpawn = GetBrickSpawn(player.playerLevel);
         MissionStarted();
     }
 
@@ -305,7 +305,7 @@ public class GameManager : MonoBehaviour {
         console.UpdateConsole();
     }
 
-    public int GetFoodSpawn(int level)
+    public int GetBrickSpawn(int level)
     {
         int n = DEFAULT_BRICK_SPAWN;
 
