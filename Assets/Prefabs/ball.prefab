@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114572504767968672}
   - component: {fileID: 54972000886985260}
   m_Layer: 0
-  m_Name: snake
+  m_Name: ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,5 +125,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tail: {fileID: 1252656233188332, guid: a88d4488af900ab42b92789eb528f2ad, type: 2}
-  food: {fileID: 1920034417351384, guid: c94bfdafb8761f14594373e9fb420181, type: 2}
+  brick: {fileID: 1920034417351384, guid: c94bfdafb8761f14594373e9fb420181, type: 2}
   tailburst: {fileID: 1529239524080954, guid: f65c173a9e2af7c4e9354f37acddaf6d, type: 2}

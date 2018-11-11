@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour {
 
     private string sharedUserID;
     public PlayerManager player;
-    public GameObject snakePrefab;
-    private Brick brick; 
+    public GameObject ballPrefab;
+    private Ball ball; 
     private GameConsole console; 
     public Text txtStart;
     public Text txtGameOver;
@@ -19,10 +19,10 @@ public class GameManager : MonoBehaviour {
     public InputField infldCrossGameUserID; 
 
 
-    public List<int?> foodPerLevel = new List<int?>() { 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48 };
-    const int DEFAULT_FOOD_SPAWN = 6;
-    public int foodSpawn ;
-    public int foodLevelOveride = 0;
+    public List<int?> bricksPerLevel = new List<int?>() { 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48 };
+    const int DEFAULT_BRICK_SPAWN = 6;
+    public int brickSpawn ;
+    public int brickLevelOveride = 0;
 
     // Start Button Size and Color
     private Color sourceColor;
@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour {
     {
         // Player starts level
         player.SetLevel(1);
-        foodSpawn = GetFoodSpawn(player.playerLevel);
+        brickSpawn = GetFoodSpawn(player.playerLevel);
 
         player.UpdatePlayerStatistics();
 
@@ -132,9 +132,9 @@ public class GameManager : MonoBehaviour {
         bttnStart.gameObject.SetActive(false);
         readyToStart = false;
 
-        // Spawn new Snake 
+        // Spawn new Ball 
         Vector3 pos = new Vector3(0, 0, -1);
-        brick = Instantiate(snakePrefab, pos, Quaternion.identity).GetComponent<Brick>();
+        ball = Instantiate(ballPrefab, pos, Quaternion.identity).GetComponent<Ball>();
 
         MissionStarted();
         
@@ -171,7 +171,7 @@ public class GameManager : MonoBehaviour {
 
         player.UpdatePlayerStatistics();
 
-        foodSpawn = GetFoodSpawn(player.playerLevel);
+        brickSpawn = GetFoodSpawn(player.playerLevel);
         MissionStarted();
     }
 
@@ -183,7 +183,7 @@ public class GameManager : MonoBehaviour {
             .AddParam("userLevel", player.playerLevel)
             .AddParam("isTutorial", false)
             .AddParam("coinBalance", player.playerCoins)
-            .AddParam("food",foodSpawn))
+            .AddParam("bricks",brickSpawn))
         .Add(new GameParametersHandler(gameParameters => {
             gameParametersHandler(gameParameters);
         }))
@@ -201,7 +201,7 @@ public class GameManager : MonoBehaviour {
             .AddParam("isTutorial", false)
             .AddParam("userLevel", player.playerLevel)
             .AddParam("coinBalance", player.playerCoins)
-            .AddParam("food", foodSpawn))
+            .AddParam("bricks", brickSpawn))
         .Add(new GameParametersHandler(gameParameters => {
             gameParametersHandler(gameParameters);
         }))
@@ -219,8 +219,8 @@ public class GameManager : MonoBehaviour {
             .AddParam("userLevel", player.playerLevel)
             .AddParam("isTutorial", false)
             .AddParam("coinBalance", player.playerCoins)
-            .AddParam("food", foodSpawn)
-            .AddParam("foodRemaining", player.foodRemaining))
+            .AddParam("bricks", brickSpawn)
+            .AddParam("bricksRemaining", player.bricksRemaining))
         .Add(new GameParametersHandler(gameParameters => {
             gameParametersHandler(gameParameters);
         }))
@@ -272,10 +272,10 @@ public class GameManager : MonoBehaviour {
             RewardReceived("coins", System.Convert.ToInt32(gameParameters["coins"]));
         }
         
-        if (gameParameters.ContainsKey("food"))
+        if (gameParameters.ContainsKey("bricks"))
         {
-            foodLevelOveride = System.Convert.ToInt32(gameParameters["food"]);
-            ModifierApplied("food", System.Convert.ToInt32(gameParameters["food"]));
+            brickLevelOveride = System.Convert.ToInt32(gameParameters["bricks"]);
+            ModifierApplied("bricks", System.Convert.ToInt32(gameParameters["bricks"]));
         }
     }
     private void imageMessageHandler(ImageMessage imageMessage)
@@ -307,15 +307,15 @@ public class GameManager : MonoBehaviour {
 
     public int GetFoodSpawn(int level)
     {
-        int n = DEFAULT_FOOD_SPAWN;
+        int n = DEFAULT_BRICK_SPAWN;
 
-        if (foodLevelOveride > 0)
+        if (brickLevelOveride > 0)
         {
-            n = foodLevelOveride;
+            n = brickLevelOveride;
         }
-        else if (foodPerLevel.Count > player.playerLevel && foodPerLevel[player.playerLevel - 1] != null)
+        else if (bricksPerLevel.Count > player.playerLevel && bricksPerLevel[player.playerLevel - 1] != null)
         {
-            n = (int)foodPerLevel[player.playerLevel - 1];
+            n = (int)bricksPerLevel[player.playerLevel - 1];
         }
 
         return n;

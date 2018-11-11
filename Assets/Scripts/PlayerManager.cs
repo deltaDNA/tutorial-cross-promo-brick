@@ -10,7 +10,7 @@ public class PlayerManager : MonoBehaviour {
     public int playerHealth = 100 ;
     public int playerCoins = 10 ;
 
-    public int foodRemaining = 0; 
+    public int bricksRemaining = 0; 
     public HudManager hud;
 
 	// Use this for initialization
@@ -35,10 +35,10 @@ public class PlayerManager : MonoBehaviour {
         playerCoins = c;
         hud.SetCoins(playerCoins);
     }
-    public void SetFoodRemaining(int f)
+    public void SetBricksRemaining(int f)
     {
-        foodRemaining = f;
-        hud.SetFoodRemaining(foodRemaining);
+        bricksRemaining = f;
+        hud.SetBricksRemaining(bricksRemaining);
     }
 
     public void UpdatePlayerStatistics()
@@ -46,6 +46,6 @@ public class PlayerManager : MonoBehaviour {
         hud.SetCoins(playerCoins);
         hud.SetHealth(playerHealth);
         hud.SetLevel(playerLevel);
-        hud.SetFoodRemaining(foodRemaining);
+        hud.SetBricksRemaining(bricksRemaining);
     } 
 }

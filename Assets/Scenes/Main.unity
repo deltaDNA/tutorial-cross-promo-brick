@@ -702,14 +702,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1692671766}
-  snakePrefab: {fileID: 1222393777683878, guid: 478f292b2bbb0404c95e73e95c39f7b5,
-    type: 2}
+  ballPrefab: {fileID: 1222393777683878, guid: 478f292b2bbb0404c95e73e95c39f7b5, type: 2}
   txtStart: {fileID: 1383782795}
   txtGameOver: {fileID: 1407461890}
   bttnStart: {fileID: 1197909504}
   infldCrossGameUserID: {fileID: 226261291}
-  foodSpawn: 0
-  foodLevelOveride: 0
+  brickSpawn: 0
+  brickLevelOveride: 0
 --- !u!1 &287139398
 GameObject:
   m_ObjectHideFlags: 0
@@ -1898,7 +1897,7 @@ MonoBehaviour:
   txtHealth: {fileID: 704857357}
   txtCoins: {fileID: 818426613}
   txtLevel: {fileID: 1757691280}
-  txtFoodRemaining: {fileID: 914149917}
+  txtBricksRemaining: {fileID: 914149917}
 --- !u!1 &818426611
 GameObject:
   m_ObjectHideFlags: 0
@@ -3125,7 +3124,7 @@ MonoBehaviour:
   playerLevel: 1
   playerHealth: 100
   playerCoins: 50
-  foodRemaining: 0
+  bricksRemaining: 0
   hud: {fileID: 757377759}
 --- !u!1 &1757691278
 GameObject:

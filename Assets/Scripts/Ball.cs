@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Brick : MonoBehaviour {
+public class Ball : MonoBehaviour {
 
     public GameObject tail;
-    public GameObject food;
+    public GameObject brick;
     private Transform rBorder;
     private Transform lBorder;
     private Transform tBorder;
@@ -21,7 +21,7 @@ public class Brick : MonoBehaviour {
 
     private List<GameObject> tailSections = new List<GameObject>();
     private List<GameObject> tailBurstParticles = new List<GameObject>();
-    private List<GameObject> foodList = new List<GameObject>();
+    private List<GameObject> brickList = new List<GameObject>();
     private bool vertical = false;
     private bool horizontal = true;
     private bool eat = false;
@@ -41,7 +41,7 @@ public class Brick : MonoBehaviour {
         bBorder = GameObject.Find("border-bottom").transform;
         
         InvokeRepeating("Movement", 0.1f, speed);
-        SpawnFood();
+        SpawnBricks();
 
     }
 	
@@ -99,7 +99,7 @@ public class Brick : MonoBehaviour {
     void OnTriggerEnter(Collider c)
     {
 
-        if (c.name.StartsWith("food"))
+        if (c.name.StartsWith("brick"))
         {
             eat = true;
             EatFood(c.gameObject);
@@ -134,48 +134,48 @@ public class Brick : MonoBehaviour {
 
     private void EatFood(GameObject f)
     {
-        foreach (GameObject food in foodList)
+        foreach (GameObject food in brickList)
         {
             if (food == f)
             {
-                foodList.Remove(food);
+                brickList.Remove(food);
                 Destroy(f);
                 Debug.Log("Munch");
                 break;
             }
         }
 
-        if (foodList.Count == 0)
+        if (brickList.Count == 0)
         {
             gameManager.LevelUp();
-            SpawnFood();
+            SpawnBricks();
 
         }
-        playerManager.SetFoodRemaining(foodList.Count);
+        playerManager.SetBricksRemaining(brickList.Count);
 
 
     }
-    public void SpawnFood()
+    public void SpawnBricks()
     {
-        int n = gameManager.foodSpawn;
+        int n = gameManager.brickSpawn;
 
         for (int i = 0; i < n; i++)
         {
             float x = (float)Random.Range(lBorder.position.x+1, rBorder.position.x-1);
             float y = (float)Random.Range(bBorder.position.y+1, tBorder.position.y-1);
-            GameObject f = Instantiate(food, new Vector3(x, y, -1), Quaternion.identity);
-            foodList.Add(f);
+            GameObject f = Instantiate(brick, new Vector3(x, y, -1), Quaternion.identity);
+            brickList.Add(f);
         }
-        gameManager.foodLevelOveride = 0; 
-        playerManager.SetFoodRemaining(foodList.Count);
+        gameManager.brickLevelOveride = 0; 
+        playerManager.SetBricksRemaining(brickList.Count);
     }
 
     public void CleanUpFood()
     {
-        foreach(GameObject food in foodList)
+        foreach(GameObject food in brickList)
         {
             Destroy(food);
-            playerManager.SetFoodRemaining(foodList.Count);
+            playerManager.SetBricksRemaining(brickList.Count);
         }
     }
 
