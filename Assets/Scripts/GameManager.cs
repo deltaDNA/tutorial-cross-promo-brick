@@ -4,9 +4,17 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using DeltaDNA;
-
+using System.Runtime.InteropServices;
 
 public class GameManager : MonoBehaviour {
+    #if UNITY_WEBGL
+    // Using a little Javascript pluging to Get/Set sharedUserID in Cookie
+    // Something more robust required for production, but OK for Cross Promo Demo purposes.
+    [DllImport("__Internal")]
+    private static extern void setCookie(string cName, string cValue ,int exDays);
+    [DllImport("__Internal")]
+    private static extern string getCookie(string cName);
+    #endif
 
     private string sharedUserID;
     public PlayerManager player;
@@ -36,6 +44,7 @@ public class GameManager : MonoBehaviour {
 
     private void Start()
     {
+               
         // These are for pulsing the start button size and alpha 
         InitialScale = transform.localScale;
         FinalScale = new Vector3(InitialScale.x + 0.04f,
@@ -51,6 +60,8 @@ public class GameManager : MonoBehaviour {
         readyToStart = true;
 
         console = GameObject.FindObjectOfType<GameConsole>();
+        console.UpdateConsole();
+
     }
 
     private void Update()
@@ -65,45 +76,73 @@ public class GameManager : MonoBehaviour {
     }
     private void DdnaPlayerConfig()
     {
-        // Use deviceID in this simple cross promo example. 
-        sharedUserID = SystemInfo.deviceUniqueIdentifier;
-        
-       
-        if (sharedUserID == "n/a" || !string.IsNullOrEmpty(PlayerPrefs.GetString("SharedUserID")))
-        {
-            // WebGL and some other platforms don't support SystemInfo.deviceUniqueIdentifier;
-            // Under normal circumstances you would use your own login system or a social identifier
-            // but for demo simplicity we'll just generate a key that you can manually enter in to multiple games.
-            // and store it in player prefs
 
-            // check player prefs
-            string s = PlayerPrefs.GetString("SharedUserID");
-            if (string.IsNullOrEmpty(s))
+#if (UNITY_WEBGL && !UNITY_EDITOR)
+            // WebGL doesn't support SystemInfo.deviceUniqueIdentifier;
+            // Under normal circumstances you would use your own login system or a social identifier
+            // but for demo simplicity we'll just generate a key and store it in a cookie so it can be reached by our other games.
+
+            sharedUserID = getCookie("SharedUserID");
+            if (string.IsNullOrEmpty(sharedUserID))
             {
-                // generate a new code                
-                s = GenerateCode(5);
-                // store new code
-                PlayerPrefs.SetString("SharedUserID", s);                
+                Debug.Log("SharedUserID was null or empty");                
+                sharedUserID = GenerateNewUserID();
             }
-            sharedUserID = s; 
-        }
+
+        #else
+            // Fallback to deviceID if not WebGL
+            sharedUserID = SystemInfo.deviceUniqueIdentifier;
+        #endif
 
         DDNA.Instance.CrossGameUserID = sharedUserID;
         Debug.Log("Cross Game userID (deviceID) = " + DDNA.Instance.CrossGameUserID);
         DDNA.Instance.SetLoggingLevel(DeltaDNA.Logger.Level.DEBUG);
         DDNA.Instance.ClientVersion = Application.version;
-       
+
         DDNA.Instance.StartSDK();
+
+
+    }
+
+    private string GenerateNewUserID()
+    {
+        // generate a new userID
+        string s = System.Guid.NewGuid().ToString();
+
+        // Store it in cookie
+        #if UNITY_WEBGL && !UNITY_EDITOR
+            setCookie("SharedUserID", s, 365);
+            Debug.Log("Created new SharedUserID and saved to cookie : " + s);
+        #endif
+
+        return s;
+    }
+
+    public void Reset()
+    {
+        // Reset User and Game
+        Debug.Log("Reseting Game");
+
+        #if UNITY_WEBGL && !UNITY_EDITOR
+            setCookie("SharedUserID", "", 365);
+        #endif
+
+        DDNA.Instance.StopSDK();
+        Start();
+
 
 
     }
     public void SetCustomCrossPormoUserID()
     {
-        
+
         if (!string.IsNullOrEmpty(infldCrossGameUserID.text))
         {
             DDNA.Instance.CrossGameUserID = infldCrossGameUserID.text;
-            PlayerPrefs.SetString("SharedUserID", DDNA.Instance.CrossGameUserID);
+
+        #if UNITY_WEBGL && !UNITY_EDITOR
+            setCookie("SharedUserID", DDNA.Instance.CrossGameUserID, 365);
+        #endif
             console.UpdateConsole();
         }
     }
